@@ -1,0 +1,36 @@
+MT variant calling pipeline based on Broad's GATK best practice MT pipeline.
+Scripts point to the files from the ROSMAP dataset, but the identical
+pipeline was applied to the Mayo and MSBB datasets.
+
+1) generateMTbams.sh
+Reads original bam files from the dataset folder and Creates an MT
+bam file and a shifted MT bam file for each sample in the bam folder.
+
+2a) collectMetrics.sh
+Reads the MT bam file (not the shifted one) and runs the haplochecker
+and picards collect WGS metrics. Output is written into the bam folder.
+(WGS metrics are currently not further used in the pipeline)
+
+2b) collectMetrics.R
+Reads results from the haplochecker and the median autosomal
+coverage as calculated in the ../mtCopyNumber folder and writes
+the file mtMetrics.csv into the scripts folder that is used in step 3.
+
+3) callVariants.sh
+Runs Mutect2 on the MT and shifted MT bam files, merges the VCF files
+and writes per samples VCFs into the vcf folder.
+
+4) makeVcfFileLists.R
+Writes text files listing the locations of the single vcf files into
+the scripts/vcfFileLists folder. Text files are splitted by tissue/brain
+region. Files are used in step 5.
+
+5) combineVcf.sh
+Runs the bcftools to merge single-sample vcf files. vcf files are
+generated for each tissue/brain region in addition to one overall vcf
+file. Files are written to vcf/merged
+
+6) summarizeResults.R
+Reads qc metrics from haplochecker and calculates some sample level
+stats (total number of homoplasmies and heteroplasmies) and writes
+results to values/variants.csv.
