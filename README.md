@@ -27,4 +27,4 @@ The R scripts in the main folder were used to generate results, figures and tabl
 The mtDNAcn was calculated using the R script located in the mtDNAcn folder.
 
 ## mtDNA variant calling
-mtDNA homoplasmic and heteroplasmic variants were detected using the scripts in the subfolder mtVariantsPipeline. The pipeline replicates the [GATK mitochondria pipeline](https://github.com/gatk-workflows/gatk4-mitochondria-pipeline). See the info file in the folder for more information how invoke the scripts.
+mtDNA homoplasmic and heteroplasmic variants were detected using the scripts in the subfolder mtVariantsPipeline. The pipeline replicates the [GATK mitochondria pipeline](https://github.com/gatk-workflows/gatk4-mitochondria-pipeline). See the info file in the folder for more information how to invoke the scripts.
