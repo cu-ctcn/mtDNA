@@ -354,10 +354,10 @@ getUniPathoStats <- function (mtcn, test="F", standardize=TRUE) {
   resAnova <- rbind(resAnova, rA)
   resMl <- rbind(resMl, rM)
   
-  # cognition, adjusted for age and gender
+  # cognition, adjusted for age, gender, and education
   ind <- !is.na(mtcn$cogn_global_lv)
-  fit <- lm(mtDNAcn ~ cogn_global_lv + age_death + msex, data=mtcn)
-  fitr <- lm(mtDNAcn ~ age_death + msex, data=mtcn[ind, ])
+  fit <- lm(mtDNAcn ~ cogn_global_lv + age_death + msex + educ, data=mtcn)
+  fitr <- lm(mtDNAcn ~ age_death + msex + educ, data=mtcn[ind, ])
   a <- anova(fit, fitr)
   rsqF <- rsq(fit, adj = FALSE, type="v")
   rsqR <- rsq(fitr, adj = FALSE, type="v")
@@ -382,8 +382,8 @@ getUniPathoStats <- function (mtcn, test="F", standardize=TRUE) {
   
   # cogn decline, adjusted for age and gender
   ind <- !is.na(mtcn$cogng_random_slope)
-  fit <- lm(mtDNAcn ~ cogng_random_slope + age_death + msex, data=mtcn)
-  fitr <- lm(mtDNAcn ~ age_death + msex, data=mtcn[ind, ])
+  fit <- lm(mtDNAcn ~ cogng_random_slope + age_death + msex + educ, data=mtcn)
+  fitr <- lm(mtDNAcn ~ age_death + msex + educ, data=mtcn[ind, ])
   a <- anova(fit, fitr)
   rsqF <- rsq(fit, adj = FALSE, type="v")
   rsqR <- rsq(fitr, adj = FALSE, type="v")
@@ -401,32 +401,6 @@ getUniPathoStats <- function (mtcn, test="F", standardize=TRUE) {
                    levelN=NA,
                    coef=coefficients(summary(fit))["cogng_random_slope", "Estimate"],
                    p=coefficients(summary(fit))["cogng_random_slope", "Pr(>|t|)"],
-                   n=sum(ind),
-                   stringsAsFactors=FALSE)
-  resAnova <- rbind(resAnova, rA)
-  resMl <- rbind(resMl, rM)
-  
-  # Education, adjusted for gpath and gender
-  ind <- !is.na(mtcn$educ)
-  fit <- lm(mtDNAcn ~ educ + age_death + msex, data=mtcn)
-  fitr <- lm(mtDNAcn ~ age_death + msex, data=mtcn[ind, ])
-  a <- anova(fit, fitr)
-  rsqF <- rsq(fit, adj = FALSE, type="v")
-  rsqR <- rsq(fitr, adj = FALSE, type="v")
-  rA <- data.frame(var="educ",
-                   region=mtcn$BrainRegion[1],
-                   rsq=1 - ((1 - rsqF)/(1 - rsqR)),
-                   p=a$`Pr(>F)`[2],
-                   n=sum(ind),
-                   stringsAsFactors=FALSE)
-  rM <- data.frame(var="educ",
-                   region=mtcn$BrainRegion[1],
-                   baseline=NA,
-                   baselineN=NA,
-                   level=NA,
-                   levelN=NA,
-                   coef=coefficients(summary(fit))["educ", "Estimate"],
-                   p=coefficients(summary(fit))["educ", "Pr(>|t|)"],
                    n=sum(ind),
                    stringsAsFactors=FALSE)
   resAnova <- rbind(resAnova, rA)

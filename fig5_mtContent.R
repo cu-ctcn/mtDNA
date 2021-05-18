@@ -190,6 +190,8 @@ plotPartialCor <- function() {
   mt$MtContent <- NA
   mt[colnames(pSet), ]$MtContent <- calculateMtContentScore(pSet)
   
+  # Removed "educ" and "msex" for simplicity since they don't alter
+  # the network structure of the other variables 
   vars <- c("MtContent", "mtDNAcn", "NumHeteroplasmy", "amyloid_sqrt", "tangles_sqrt",  "Neu",
             "cogn_global_lv", "age_death")
   rename <- c("Mt\ncontent", "mtDNAcn", "mtDNA\nhetero-\nplasmy", "Amyloid", "Tau", "Proportion\nneurons",
@@ -204,7 +206,9 @@ plotPartialCor <- function() {
   bn <- bootnet(data=mt, default="EBICglasso", corMethod="cov", nBoots=1000, tuning=0.5)
   
   net$graph <- net$graph * -1 # invert colors
-  ggnet <- as.ggraph(plot(net))
+  qnet <- plot(net)
+  qnet$graphAttributes$Nodes$width <- qnet$graphAttributes$Nodes$width * 1.6
+  ggnet <- as.ggraph(qnet)
   
   return(list(graph=ggnet, bootstrap=plot(bn)))
 }
