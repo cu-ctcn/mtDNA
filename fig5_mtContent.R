@@ -4,13 +4,15 @@ library(huge)
 library(bootnet)
 library(qgraph)
 library(cowplot)
+library(ggraph)
+library(dplyr)
 
 # Read the normalized TMT proteomics data available at Synapse:
 #   data file: syn21266454; md5sum=fc68fceafbd81cb77b311f6171f92be6
 #   phenotypes: syn21266449; md5sum=58eafa88bae2c14e20cc6df87590567b
 readTmtData <- function() {
 
-  # if (file.exists("pSet.Rdata")) {load("pSet.Rdata"); return(pSet)}
+  if (file.exists("pSet.Rdata")) {load("pSet.Rdata"); return(pSet)}
   
   file <- "/mnt/mfs/ctcn/datasets/rosmap/tmt/dlpfcTissue/synapseRel1/output/C2.median_polish_corrected_log2(abundanceRatioCenteredOnMedianOfBatchMediansPerProtein)-8817x400.csv"
   tmt <- read.table(file, sep=",", quote = "\"", header=TRUE, row.names=1, stringsAsFactors=FALSE)
@@ -42,7 +44,7 @@ readTmtData <- function() {
 
 # Proteins used to calculate mt content score
 # https://www.proteinatlas.org/humanproteome/cell/mitochondria - Table 1 "Selection of proteins suitable as markers for mitochondria."
-# Manual: Outer membrane proteins which localize only in mt based on Human Protein Atlas.
+# Manual: Outer membrane proteins specific to MT based on Human Protein Atlas.
 getMtContentProteins <- function () {
   
   mtContentProt <- read.csv(text="protein, symbol, source, note
@@ -70,39 +72,29 @@ calculateMtContentScore <- function(pSet) {
   med <- apply(tmt, 2, median)
   return(med)
 }
-  
 
-# Calculate Mt complex scores based on GO terms
-calculateMtComplexScores <- function(pSet) {
-  library(org.Hs.eg.db)
-  library(GO.db)
-  goTerms <- c("ComplexI"="GO:0005747",
-               "ComplexII"="GO:0005749",
-               "ComplexIII"="GO:0005750",
-               "ComplexIV"="GO:0005751",
-               "ComplexV"="GO:0005753")
-  mtGoGenes <- list()
-  for (i in 1:length(goTerms)) {
-    mtGoGenes[[i]] <- unique(select(org.Hs.eg.db, keys=goTerms[i], columns=c("UNIPROT"), keytype="GO")$UNIPROT)
-  }
-  names(mtGoGenes) <- names(goTerms)
-  stopifnot(!any(is.na(unlist(mtGoGenes))))
+
+# Calculate Mt complex scores based on the annotation given in
+# Supplementary Excel File 3. Also calculates a score for
+# mtDNA-encoded proteins.
+calculateMtComplexScores <- function(pSet, excel3="tables/SupExcelFile3.csv") {
   
-  mtGoGenes <- lapply(mtGoGenes, function (x) {
-    x <- x[x %in% rownames(pSet)]
-    x <- x[! apply(is.na(assay(pSet)[x, ]), 1, any)]
-    return(x)
-  })
-  # sapply(mtGoGenes, length)
-  # ComplexI  ComplexII ComplexIII  ComplexIV   ComplexV 
-  #       38          3          4          5         12 
+  # Read Supplementary Exel File 3 with gene annotation
+  S3 <- read.csv(file=excel3, stringsAsFactors=FALSE)
+  mtGenes <- split(S3$UniprotId, f=S3$Complex)
+  mtGenes$mtEncoded <- S3$UniprotId[S3$DNA == "mtDNA"]
+  
+#  sapply(mtGenes, length)
+#  Complex I  Complex II Complex III  Complex IV   Complex V   mtEncoded
+#         55           6          15          40          20          11
+  
   med <- numeric()
-  for (i in 1:length(mtGoGenes)) {
-    tmt <- assay(pSet)[mtGoGenes[[i]], ]
-    med <- cbind(med, apply(tmt, 2, median))
+  for (i in 1:length(mtGenes)) {
+    tmt <- assay(pSet)[mtGenes[[i]], ]
+    med <- cbind(med, apply(tmt, 2, median, na.rm=TRUE))
   }
-  colnames(med) <- names(mtGoGenes)
-
+  colnames(med) <- names(mtGenes)
+  
   return(med)
 }
 
@@ -148,18 +140,20 @@ plotCormat <- function() {
   mt$MtComplexIII <- NA
   mt$MtComplexIV <- NA
   mt$MtComplexV <- NA
-  mt[rownames(mtComplex), ]$MtComplexI <- mtComplex[, "ComplexI"]
-  mt[rownames(mtComplex), ]$MtComplexII <- mtComplex[, "ComplexII"]
-  mt[rownames(mtComplex), ]$MtComplexIII <- mtComplex[, "ComplexIII"]
-  mt[rownames(mtComplex), ]$MtComplexIV <- mtComplex[, "ComplexIV"]
-  mt[rownames(mtComplex), ]$MtComplexV <- mtComplex[, "ComplexV"]
+  mt$mtDNAencoded <- NA
+  mt[rownames(mtComplex), ]$MtComplexI <- mtComplex[, "Complex I"]
+  mt[rownames(mtComplex), ]$MtComplexII <- mtComplex[, "Complex II"]
+  mt[rownames(mtComplex), ]$MtComplexIII <- mtComplex[, "Complex III"]
+  mt[rownames(mtComplex), ]$MtComplexIV <- mtComplex[, "Complex IV"]
+  mt[rownames(mtComplex), ]$MtComplexV <- mtComplex[, "Complex V"]
+  mt[rownames(mtComplex), ]$mtDNAencoded <- mtComplex[, "mtEncoded"]
   
   vars <- c("MtComplexI", "MtComplexII", "MtComplexIII", "MtComplexIV", "MtComplexV",
-            "MtContent", "mtDNAcn", "NumHeteroplasmy", "amyloid_sqrt", "tangles_sqrt",  "Neu",
-            "cogn_global_lv", "age_death")
+            "MtContent", "mtDNAencoded", "amyloid_sqrt", "tangles_sqrt",  "Neu",
+            "cogn_global_lv", "age_death", "NumHeteroplasmy", "mtDNAcn")
   rename <- c("Mt complex I", "Mt complex II", "Mt complex III", "Mt complex IV", "Mt complex V",
-              "Mt content", "mtDNAcn", "mtDNA heteroplasmy", "Amyloid", "Tau", "Proportion neurons",
-              "Cognition", "Age")
+              "Mt content", "mtDNA-encoded Prot.", "Amyloid", "Tau", "Proportion neurons",
+              "Cognition", "Age", "mtDNA heteroplasmy", "mtDNAcn")
   mt <- mt[, vars]
   colnames(mt) <- rename
   notNa <- as.matrix(!is.na(mt))
@@ -175,7 +169,7 @@ plotCormat <- function() {
 
 
 # Fig 5B - sparse graph of partial correlation between phenotypes and mt variables
-# Fig S5C - assessment of the stability of the graph based on bootstraping
+# Fig S5C - assessment of the stability of the graph based on bootstrapping
 plotPartialCor <- function() {
   
   mt <- read.csv("rosmap.csv", colClasses=c(ProjID="character", apoe_genotype="character"),
@@ -211,6 +205,72 @@ plotPartialCor <- function() {
   ggnet <- as.ggraph(qnet)
   
   return(list(graph=ggnet, bootstrap=plot(bn)))
+}
+
+
+# Copied from qgraph 1.6.5 (was removed in later versions)
+as.ggraph <- function(object){
+  # To graph object using tidygraph:
+  df <- as.data.frame(object$Edgelist)
+  
+  if (any(df$directed)){
+    stop("Not yet supported for directed graphs")
+  }
+  
+  tidyG <- tidygraph::tbl_graph(edges = df[,1:2], directed = all(df$directed))
+  
+  edges <- NULL
+  nodes <- NULL
+  order <- NULL
+  n <- NULL
+  
+  # Add ID factor:
+  tidyG <- tidyG %>% tidygraph::activate(edges) %>% dplyr::mutate(id = as.factor(seq_len(dplyr::n())))
+  tidyG <- tidyG %>% tidygraph::activate(nodes) %>% dplyr::mutate(id = as.factor(seq_len(dplyr::n())), label = object$graphAttributes$Nodes$labels)
+  
+  # Put the edges in the right order:
+  tidyG <- tidyG %>% tidygraph::activate(edges) %>% dplyr::mutate(order = order(object$graphAttributes$Graph$edgesort)) %>% dplyr::arrange(order)
+  
+  # Create plot:
+  ggraph::ggraph(tidyG, layout = object$layout) + 
+    
+    # Edges:
+    ggraph::geom_edge_fan(aes(
+      color = id,
+      edge_width = id,
+      edge_linetype = id
+    ), show.legend = FALSE) + 
+    ggraph::scale_edge_color_manual(values = object$graphAttributes$Edges$color) +
+    ggraph::scale_edge_width_manual(values = object$graphAttributes$Edges$width/2) +
+    ggraph::scale_edge_linetype_manual(values = sapply(object$graphAttributes$Edges$lty,switch,
+                                                       '1' = "solid", '2' = "dashed", '3'= "dotted", '4' = "dotdash", '5' = "longdash", '6' = "twodash"
+    )) + 
+    
+    # Nodes:
+    ggraph::geom_node_point(
+      aes_string(
+        size = "id",
+        colour = "id",
+        fill = "id"
+      ), shape = 21, show.legend = FALSE
+    ) + 
+    ggplot2::scale_size_manual(values = object$graphAttributes$Nodes$width*2)  + 
+    ggplot2::scale_colour_manual(values = object$graphAttributes$Nodes$border.color) +
+    ggplot2::scale_fill_manual(values = object$graphAttributes$Nodes$color) +
+    
+    # Labels:
+    ggraph::geom_node_text(
+      aes_string(
+        label = "label"
+      )
+    ) +
+    
+    # Limits:
+    ggplot2::xlim(-1-object$plotOptions$mar[2],1+object$plotOptions$mar[3]) + 
+    ggplot2::ylim(-1-object$plotOptions$mar[1],1+object$plotOptions$mar[3]) +
+    
+    # Theme
+    ggraph::theme_graph(plot_margin=margin(0,0,0,0))
 }
 
 
