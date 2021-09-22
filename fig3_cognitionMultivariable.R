@@ -131,10 +131,10 @@ generateFigure3 <- function() {
   pmtDNAcn <- paste("p == ", formatC(pa$data["mtDNAcn", "Pr(>|t|)"], digits=2), sep="")
   plotA <- pa$p + 
     annotate("text", x=0.135, y=12.4, label=pEdu, parse=TRUE, col="royalblue") +
-    annotate("text", x=-0.69, y=10.4, label=pTau, parse=TRUE, col="royalblue") +
+    annotate("text", x=-0.68, y=10.4, label=pTau, parse=TRUE, col="royalblue") +
     annotate("text", x=-0.59, y=9.4, label=pLewy, parse=TRUE, col="royalblue") +
     annotate("text", x=-0.51, y=7.4, label=pGI, parse=TRUE, col="royalblue") +
-    annotate("text", x=-0.74, y=2.4, label=pHs, parse=TRUE, col="royalblue") +
+    annotate("text", x=-0.70, y=2.4, label=pHs, parse=TRUE, col="royalblue") +
     annotate("text", x=0.10, y=1.4, label=pmtDNAcn, parse=TRUE, col="royalblue")
   
   # add p-values to figure B
@@ -146,7 +146,7 @@ generateFigure3 <- function() {
   pmtDNAcn <- paste("p == ", formatC(pb$data["mtDNAcn", "Pr(>|t|)"], digits=2), sep="")
   plotB <- pb$p + 
     annotate("text", x=0.135, y=13.4, label=pEdu, parse=TRUE, col="royalblue") +
-    annotate("text", x=-0.65, y=11.4, label=pTau, parse=TRUE, col="royalblue") +
+    annotate("text", x=-0.63, y=11.4, label=pTau, parse=TRUE, col="royalblue") +
     annotate("text", x=-0.58, y=10.4, label=pLewy, parse=TRUE, col="royalblue") +
     annotate("text", x=-0.51, y=8.4, label=pGI, parse=TRUE, col="royalblue") +
     annotate("text", x=-0.65, y=3.4, label=pHs, parse=TRUE, col="royalblue") +
