@@ -670,7 +670,7 @@ plotVarExplByPathologies <- function (csv="rosmap.csv") {
     geom_text(aes(y=rsq, label=Significance, group=Region), position=position_dodge(width=0.8), vjust=-0.1, size=3) +
     scale_fill_manual(values=tissueCols) +
     xlab("") + ylab(expression(paste("mtDNAcn partial R"^2))) +
-    theme_light() + theme(axis.text.x=element_text(angle=35, vjust=1, hjust=1), legend.position=c(0.001, 0.999), legend.justification = c(0,1))
+    theme_light() + theme(axis.text.x=element_text(angle=35, vjust=1, hjust=1), legend.position=c(0.001, 0.996), legend.justification = c(0,1))
   
   return(p)
 }
@@ -697,7 +697,7 @@ plotTdpDetails <- function (csv="rosmap.csv", region="PCC") {
   
   p <- ggplot(data, aes(x=tdp, y=mtDNAcn)) +
     geom_boxplot(fill=tissueCols[region], outlier.shape=NA) +
-    geom_jitter(width=0.1) +
+    geom_jitter(width=0.1, size=1) +
     stat_compare_means(comparisons=compare, method="t.test") +
     xlab("TDP-43 pathology") +
     ylab(paste("mtDNAcn in", region)) +
@@ -1064,10 +1064,10 @@ generateFigure2 <- function() {
           annotate("text", x=-0.29, y=10.4, label=pTau, parse=TRUE, col="royalblue")
 
   p <- plot_grid(plot_grid(pa, labels=c("A")),
-                 plot_grid(pb, pc, pd, labels=c("B", "C", "D"), ncol=3, rel_widths = c(0.25, 0.20, 0.55)),
+                 plot_grid(pb, pc, pd, labels=c("B", "C", "D"), ncol=3, rel_widths = c(0.24, 0.19, 0.57)),
                  nrow=2, rel_heights=c(0.45, 0.55))
   
-  ggsave("figures/figure2.pdf", plot=p, width=12, height=8, device=cairo_pdf)
+  ggsave("figures/figure2.pdf", plot=p, width=10.5, height=7.5, device=cairo_pdf)
 }
 
 

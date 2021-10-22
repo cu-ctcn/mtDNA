@@ -30,7 +30,7 @@ plotMtDNAcnRosmap <- function(csv="rosmap.csv") {
   
   pDQ <- ggplot(mtDlpfcQ, aes(x=Dx, y=mtDNAcnRaw)) +
     geom_boxplot(fill=tissueCols["DLPFC"], outlier.shape=NA) +
-    geom_jitter(width=0.1) +
+    geom_jitter(width=0.1, size=1) +
     stat_compare_means(comparisons=compare, method="wilcox.test") +
     xlab("") +
     ylab("mtDNAcn in DLPFC\n(QIAamp)") +
@@ -48,7 +48,7 @@ plotMtDNAcnRosmap <- function(csv="rosmap.csv") {
   
   pDA <- ggplot(mtDlpfcA, aes(x=Dx, y=mtDNAcnRaw)) +
     geom_boxplot(fill=tissueCols["DLPFC"], outlier.shape=NA) +
-    geom_jitter(width=0.1) +
+    geom_jitter(width=0.1, size=1) +
     stat_compare_means(comparisons=compare, method="wilcox.test") +
     xlab("") +
     ylab("mtDNAcn in DLPFC\n(AllPrep Universal)") +
@@ -66,7 +66,7 @@ plotMtDNAcnRosmap <- function(csv="rosmap.csv") {
   
   pPCC <- ggplot(mtPCC, aes(x=Dx, y=mtDNAcnRaw)) +
     geom_boxplot(fill=tissueCols["PCC"], outlier.shape=NA) +
-    geom_jitter(width=0.1) +
+    geom_jitter(width=0.1, size=1) +
     stat_compare_means(comparisons=compare, method="wilcox.test") +
     xlab("") +
     ylab("mtDNAcn in PCC\n(AllPrep Universal)") +
@@ -84,7 +84,7 @@ plotMtDNAcnRosmap <- function(csv="rosmap.csv") {
   
   pCB <- ggplot(mtCB, aes(x=Dx, y=mtDNAcnRaw)) +
     geom_boxplot(fill=tissueCols["CB"], outlier.shape=NA) +
-    geom_jitter(width=0.1) +
+    geom_jitter(width=0.1, size=1) +
     stat_compare_means(comparisons=compare, method="wilcox.test") +
     xlab("") +
     ylab("mtDNAcn in CB\n(Gentra Puregene)") +
@@ -116,7 +116,7 @@ plotMtDNAcnMayo <- function(csv="mayo.csv") {
   
   p <- ggplot(mt, aes(x=Dx, y=mtDNAcnRaw)) +
     geom_boxplot(fill="salmon", outlier.shape=NA) +
-    geom_jitter(width=0.1) +
+    geom_jitter(width=0.1, size=1) +
     stat_compare_means(comparisons=compare, method="wilcox.test") +
     xlab("") +
     ylab("mtDNAcn in TCX") +
@@ -148,7 +148,7 @@ plotMtDNAcnMsbb <- function(csv="msbb.csv") {
   
   p <- ggplot(mt, aes(x=Dx, y=mtDNAcnRaw)) +
     geom_boxplot(fill="aquamarine3", outlier.shape=NA) +
-    geom_jitter(width=0.1) +
+    geom_jitter(width=0.1, size=1) +
     stat_compare_means(comparisons=compare, method="wilcox.test") +
     xlab("") +
     ylab("mtDNAcn in FP") +
@@ -271,11 +271,11 @@ generateFigure1 <- function() {
   # Generate panel
   upperRow <- plot_grid(rosmap$dlpfcQ, rosmap$dlpfcA, rosmap$pcc, rosmap$cb, nrow=1,
                         labels=c("A", "B", "C", "D"))
-  lowerRow <- plot_grid(mayo$p, msbb$p, table1g, nrow=1, rel_widths=c(0.45, 0.25, 0.3),
+  lowerRow <- plot_grid(mayo$p, msbb$p, table1g, nrow=1, rel_widths=c(0.43, 0.23, 0.34),
                         labels=c("E", "F", "G"))
   p <- plot_grid(upperRow, lowerRow, nrow=2)
 
-  ggsave("figures/figure1.pdf", plot=p, width=12, height=7)
+  ggsave("figures/figure1.pdf", plot=p, width=11, height=6)
 }
 
 

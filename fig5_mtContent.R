@@ -280,8 +280,8 @@ generateFigure5 <- function() {
   cormat <- plotCormat()
   net <- plotPartialCor()
   
-  p <- plot_grid(cormat$p, net$graph, nrow=1, labels=c("A", "B"))
-  ggsave("figures/figure5.pdf", plot=p, width=12, height=6)
+  p <- plot_grid(cormat$p, net$graph, nrow=1, rel_widths=c(1.4, 1), labels=c("A", "B"))
+  ggsave("figures/figure5.pdf", plot=p, width=11, height=5.5)
 }
 
 

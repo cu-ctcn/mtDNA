@@ -130,12 +130,12 @@ generateFigure3 <- function() {
   pHs <- paste("p == ", gsub("e-0", "%*%10^-", formatC(pa$data["hspath_typ1", "Pr(>|t|)"], digits=2)), sep="")
   pmtDNAcn <- paste("p == ", formatC(pa$data["mtDNAcn", "Pr(>|t|)"], digits=2), sep="")
   plotA <- pa$p + 
-    annotate("text", x=0.135, y=12.4, label=pEdu, parse=TRUE, col="royalblue") +
-    annotate("text", x=-0.68, y=10.4, label=pTau, parse=TRUE, col="royalblue") +
-    annotate("text", x=-0.59, y=9.4, label=pLewy, parse=TRUE, col="royalblue") +
-    annotate("text", x=-0.51, y=7.4, label=pGI, parse=TRUE, col="royalblue") +
-    annotate("text", x=-0.70, y=2.4, label=pHs, parse=TRUE, col="royalblue") +
-    annotate("text", x=0.10, y=1.4, label=pmtDNAcn, parse=TRUE, col="royalblue")
+    annotate("text", x=0.092, y=12.4, label=pEdu, parse=TRUE, col="royalblue") +
+    annotate("text", x=-0.64, y=10.4, label=pTau, parse=TRUE, col="royalblue") +
+    annotate("text", x=-0.53, y=9.4, label=pLewy, parse=TRUE, col="royalblue") +
+    annotate("text", x=-0.48, y=7.4, label=pGI, parse=TRUE, col="royalblue") +
+    annotate("text", x=-0.66, y=2.4, label=pHs, parse=TRUE, col="royalblue") +
+    annotate("text", x=0.081, y=1.4, label=pmtDNAcn, parse=TRUE, col="royalblue")
   
   # add p-values to figure B
   pEdu <- paste("p == ", formatC(pb$data["educ", "Pr(>|t|)"], digits=2), sep="")
@@ -145,15 +145,15 @@ generateFigure3 <- function() {
   pHs <- paste("p == ", gsub("e-0", "%*%10^-", formatC(pb$data["hspath_typ1", "Pr(>|t|)"], digits=2)), sep="")
   pmtDNAcn <- paste("p == ", formatC(pb$data["mtDNAcn", "Pr(>|t|)"], digits=2), sep="")
   plotB <- pb$p + 
-    annotate("text", x=0.135, y=13.4, label=pEdu, parse=TRUE, col="royalblue") +
-    annotate("text", x=-0.63, y=11.4, label=pTau, parse=TRUE, col="royalblue") +
-    annotate("text", x=-0.58, y=10.4, label=pLewy, parse=TRUE, col="royalblue") +
-    annotate("text", x=-0.51, y=8.4, label=pGI, parse=TRUE, col="royalblue") +
-    annotate("text", x=-0.65, y=3.4, label=pHs, parse=TRUE, col="royalblue") +
-    annotate("text", x=0.12, y=2.4, label=pmtDNAcn, parse=TRUE, col="royalblue")
+    annotate("text", x=0.1, y=13.4, label=pEdu, parse=TRUE, col="royalblue") +
+    annotate("text", x=-0.55, y=11.4, label=pTau, parse=TRUE, col="royalblue") +
+    annotate("text", x=-0.5, y=10.4, label=pLewy, parse=TRUE, col="royalblue") +
+    annotate("text", x=-0.44, y=8.4, label=pGI, parse=TRUE, col="royalblue") +
+    annotate("text", x=-0.54, y=3.4, label=pHs, parse=TRUE, col="royalblue") +
+    annotate("text", x=0.09, y=2.4, label=pmtDNAcn, parse=TRUE, col="royalblue")
   
   p <- plot_grid(plotA, plotB, nrow=1, labels=c("A", "B"))
-  ggsave("figures/figure3.pdf", plot=p, width=11, height=5, device=cairo_pdf)
+  ggsave("figures/figure3.pdf", plot=p, width=10, height=5, device=cairo_pdf)
   
   # summary(pa$fit)$r.squared - summary(pa$fitR)$r.squared # 0.01801835
   # summary(pb$fit)$r.squared - summary(pb$fitR)$r.squared # 0.008106487
