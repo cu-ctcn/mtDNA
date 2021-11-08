@@ -1,6 +1,6 @@
 # mtDNA
 
-This repository contains R and shell scripts that were used to generate the results, figures, and tables presented in the manuscript “Characterization of mitochondrial DNA quantity and quality in the human aged and Alzheimer’s disease brain”. The data itself is not stored in this repository but can be accessed via the AD Knowledge portal. Please visit the [manuscript’s landing page](https://doi.org/10.7303/syn25618990) for more details about the datasets.
+This repository contains R and shell scripts that were used to generate the results, figures, and tables presented in the manuscript [“Characterization of mitochondrial DNA quantity and quality in the human aged and Alzheimer’s disease brain”](https://doi.org/10.1186/s13024-021-00495-8) published in Molecular Neurodegeneration. The data itself is not stored in this repository but can be accessed via the AD Knowledge portal. Please visit the [manuscript’s landing page](https://doi.org/10.7303/syn25618990) for more details about the datasets.
 
 ## Analysis, figures, and tables
 The R scripts in the main folder were used to generate results, figures and tables shown in the manuscript.
